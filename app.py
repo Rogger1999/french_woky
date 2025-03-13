@@ -444,6 +444,68 @@ def next_learning_quiz_question(next_clicks, quiz_data, selected_file, quiz_type
     # Only handle multiple_choice and type_answer quiz types
     return display_quiz_content(vocab_data, quiz_type=quiz_type, direction=direction)
 
+# Check answer callback for quizzes - updated to work with quiz.py components
+@callback(
+    [Output('quiz-feedback', 'children'),
+     Output('quiz-check-btn', 'style'),
+     Output('quiz-next-btn', 'style')],
+    [Input('quiz-check-btn', 'n_clicks')],
+    [State('quiz-answer-input', 'value'),
+     State('quiz-options', 'value'),
+     State('quiz-data', 'data'),
+     State('quiz-type-store', 'data')],
+    prevent_initial_call=True
+)
+def check_quiz_answer(n_clicks, typed_answer, selected_option, quiz_data, quiz_type):
+    if not n_clicks:
+        return dash.no_update, dash.no_update, dash.no_update
+    
+    correct_answer = quiz_data.get('correct_answer', '')
+    
+    # Handle different quiz types
+    if quiz_type == "multiple_choice":
+        user_answer = selected_option
+    else:  # type_answer
+        user_answer = typed_answer
+    
+    if not user_answer:
+        return html.Div("Please select/type an answer first", style={"color": "blue", "margin": "10px 0"}), dash.no_update, dash.no_update
+    
+    # Check if answer is correct
+    if user_answer.lower().strip() == correct_answer.lower().strip():
+        feedback = html.Div("Correct!", style={"color": "green", "margin": "10px 0"})
+    else:
+        feedback = html.Div([
+            html.Span("Incorrect! ", style={"color": "red"}),
+            html.Span(f"The correct answer is: {correct_answer}")
+        ], style={"margin": "10px 0"})
+    
+    return feedback, {'display': 'none'}, {'display': 'block'}
+
+# Next question callback for quizzes - updated to work with quiz.py components
+@callback(
+    Output('quiz-display', 'children', allow_duplicate=True),
+    [Input('quiz-next-btn', 'n_clicks')],
+    [State('quiz-data', 'data'),
+     State('file-store', 'data'),
+     State('quiz-type-store', 'data')],
+    prevent_initial_call=True
+)
+def next_quiz_question(next_clicks, quiz_data, selected_file, quiz_type):
+    if not next_clicks:
+        return dash.no_update
+    
+    direction = quiz_data.get('direction', 'fr-de')
+    
+    # Load vocabulary data based on selected file
+    if selected_file == "ALL" or not selected_file:
+        vocab_data = load_vocabulary_data()
+    else:
+        vocab_data = load_vocabulary(selected_file)
+    
+    # Generate new quiz content
+    return display_quiz_content(vocab_data, quiz_type=quiz_type, direction=direction)
+
 # Run the app
 if __name__ == "__main__":
     app.run_server(debug=True, port=8080)
