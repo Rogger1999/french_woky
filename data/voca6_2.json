@@ -1,0 +1,32 @@
+{
+  "un disque dur": {
+    "german": "eine Festplatte"
+  },
+  "une clé USB": {
+    "german": "ein USB-Stick"
+  },
+  "un logiciel": {
+    "german": "eine Software"
+  },
+  "un fichier": {
+    "german": "eine Datei"
+  },
+  "un dossier": {
+    "german": "ein Ordner"
+  },
+  "un réseau": {
+    "german": "ein Netzwerk"
+  },
+  "un site web": {
+    "german": "eine Webseite"
+  },
+  "un navigateur": {
+    "german": "ein Browser"
+  },
+  "un moteur de recherche": {
+    "german": "eine Suchmaschine"
+  },
+  "un lien": {
+    "german": "ein Link"
+  }
+}

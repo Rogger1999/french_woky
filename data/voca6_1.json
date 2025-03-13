@@ -1,0 +1,32 @@
+{
+  "un ordinateur": {
+    "german": "ein Computer"
+  },
+  "un portable": {
+    "german": "ein Laptop"
+  },
+  "une tablette": {
+    "german": "ein Tablet"
+  },
+  "un smartphone": {
+    "german": "ein Smartphone"
+  },
+  "un clavier": {
+    "german": "eine Tastatur"
+  },
+  "une souris": {
+    "german": "eine Maus"
+  },
+  "un écran": {
+    "german": "ein Bildschirm"
+  },
+  "un casque": {
+    "german": "ein Kopfhörer"
+  },
+  "une imprimante": {
+    "german": "ein Drucker"
+  },
+  "un scanner": {
+    "german": "ein Scanner"
+  }
+}

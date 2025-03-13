@@ -1,0 +1,43 @@
+{
+  "ne ... pas trop": {
+    "german": "nicht wirklich"
+  },
+  "un match": {
+    "german": "ein Spiel; ein Wettkampf"
+  },
+  "contre": {
+    "german": "gegen"
+  },
+  "en ce moment": {
+    "german": "im Augenblick; zurzeit"
+  },
+  "avoir envie de faire qc": {
+    "german": "Lust haben, etwas zu tun"
+  },
+  "dormir": {
+    "german": "schlafen",
+    "explanation": "je dors, tu dors, il/elle/on dort, nous dormons, vous dormez, ils/elles dorment"
+  },
+  "beaucoup": {
+    "german": "viel"
+  },
+  "partir": {
+    "german": "weggehen, abreisen",
+    "explanation": "je pars, tu pars, il/elle/on part, nous partons, vous partez, ils/elles partent"
+  },
+  "C'est la catastrophe!": {
+    "german": "Das ist eine Katastrophe!"
+  },
+  "rater qc (fam.)": {
+    "german": "etw. verpassen; etw. nicht schaffen; etw. verfehlen"
+  },
+  "une passe": {
+    "german": "ein Pass (beim Sport)"
+  },
+  "une faute": {
+    "german": "ein Fehler; ein Foul"
+  },
+  "un entraîneur": {
+    "german": "ein Trainer"
+  }
+}
