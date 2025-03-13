@@ -63,17 +63,33 @@ app.layout = html.Div([
 
 # Callback for language direction toggle
 @app.callback(
-    Output("toggle-direction-btn", "children"),
-    Output("direction-store", "data"),
-    Input("toggle-direction-btn", "n_clicks"),
-    State("direction-store", "data"),
+    [Output("toggle-direction-btn", "children"),
+     Output("direction-store", "data"),
+     Output("content-section", "children", allow_duplicate=True)],
+    [Input("toggle-direction-btn", "n_clicks")],
+    [State("direction-store", "data"),
+     State("mode-store", "data"),
+     State("file-store", "data"),
+     State("vocab-store", "data")],
     prevent_initial_call=True
 )
-def toggle_direction(n_clicks, direction):
+def toggle_direction(n_clicks, direction, mode, file_name, vocab_data):
     if direction == "fr-de":
-        return "DE → FR", "de-fr"
+        new_direction = "de-fr"
+        button_text = "DE → FR"
     else:
-        return "FR → DE", "fr-de"
+        new_direction = "fr-de"
+        button_text = "FR → DE"
+    
+    # Update content based on the new direction
+    if mode == "learning":
+        content = display_learning_content(vocab_data, new_direction)
+    elif mode == "learning-quiz":
+        content = display_learning_quiz_content(vocab_data, new_direction)
+    else:
+        content = display_quiz_content(vocab_data, new_direction)
+    
+    return button_text, new_direction, content
 
 # Callback for main menu buttons
 @app.callback(
