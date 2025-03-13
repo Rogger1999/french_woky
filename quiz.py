@@ -1,4 +1,4 @@
-from dash import html, dcc
+from dash import html, dcc, callback, Input, Output, State
 import dash_bootstrap_components as dbc
 import random
 
@@ -21,47 +21,97 @@ def generate_options(correct_answer, all_answers, num_options=3):
     
     return options
 
-def display_quiz_content(vocab_data, direction):
+def display_quiz_content(vocab_data, quiz_type="multiple_choice", direction="fr-de"):
+    """
+    Display quiz content based on quiz type and direction.
+    
+    Args:
+        vocab_data: Dictionary of vocabulary data
+        quiz_type: Either "multiple_choice" or "type_answer"
+        direction: Either "fr-de" or "de-fr"
+    """
+    # Determine source and target languages
     source_lang = "french" if direction == "fr-de" else "german"
     target_lang = "german" if direction == "fr-de" else "french"
     
-    all_answers = [details[target_lang] for details in vocab_data.values()]
+    # Select a random word to quiz
+    word_keys = list(vocab_data.keys())
+    random_word_key = random.choice(word_keys)
     
-    # Initialize quiz state
-    quiz_state = {
-        "current_index": 0,
-        "correct_answers": 0,
-        "total_questions": len(vocab_data),
-        "all_words": list(vocab_data.items()),
-        "source_lang": source_lang,
-        "target_lang": target_lang,
-        "answered": False
-    }
+    if source_lang == "french":
+        question_word = random_word_key
+        correct_answer = vocab_data[random_word_key]["german"]
+    else:
+        correct_answer = random_word_key
+        question_word = vocab_data[random_word_key]["german"]
     
-    current_word = quiz_state["all_words"][0]
-    question = current_word[0] if source_lang == "french" else current_word[1][source_lang]
-    correct_answer = current_word[1][target_lang]
-    options = generate_options(correct_answer, all_answers)
-    
-    return html.Div([
-        html.H3("Quiz Mode"),
-        html.Div(id="quiz-section", children=[
-            html.H4("Quiz Section"),
-            dbc.Card([
-                dbc.CardHeader(html.H4(question, className="text-center")),
-                dbc.CardBody([
-                    html.Div(id="options-container", className="d-grid gap-2", children=[
-                        dbc.Button(option, id={"type": "option-btn", "index": option}, color="outline-primary", className="mb-2 text-start")
-                        for option in options
-                    ]),
-                ]),
-                dbc.CardFooter([
-                    html.Div(id="feedback", className="mb-2"),
-                    dbc.Button("Next Question", id="next-question-btn", color="success", className="me-2"),
-                    dbc.Button("← Back to Files", id="back-to-files-btn", color="secondary"),
-                ]),
-            ], className="mb-3"),
-            dbc.Alert(id="score-display", color="info", className="text-center"),
-        ]),
-        dcc.Store(id="quiz-state", data=quiz_state)
+    # Create direction toggle buttons
+    direction_toggle = dbc.ButtonGroup([
+        dbc.Button("FR-DE", id="fr-de-quiz-btn", color="primary", className="me-1", 
+                  active=direction=="fr-de"),
+        dbc.Button("DE-FR", id="de-fr-quiz-btn", color="primary", 
+                  active=direction=="de-fr")
     ])
+    
+    if quiz_type == "multiple_choice":
+        # Generate 3 options, including the correct one
+        options = [correct_answer]
+        while len(options) < 3:
+            random_option_key = random.choice(word_keys)
+            if source_lang == "french":
+                option = vocab_data[random_option_key]["german"]
+            else:
+                option = random_option_key
+            
+            if option not in options:
+                options.append(option)
+        
+        # Shuffle options
+        random.shuffle(options)
+        
+        # Create radio items for multiple choice
+        quiz_content = html.Div([
+            direction_toggle,
+            html.H3("Quiz Mode - Multiple Choice"),
+            html.Div([
+                html.H4(f"Translate: {question_word}"),
+                dcc.RadioItems(
+                    id='quiz-options',
+                    options=[{'label': opt, 'value': opt} for opt in options],
+                    labelStyle={'display': 'block', 'margin': '10px'}
+                ),
+                html.Div(id='quiz-feedback'),
+                html.Button("Check Answer", id="check-answer-btn"),
+                html.Button("Next Question", id="next-question-btn", style={'display': 'none'}),
+                # Store correct answer and other data
+                dcc.Store(id='quiz-data', data={
+                    'correct_answer': correct_answer,
+                    'question_word': question_word,
+                    'direction': direction,
+                    'quiz_type': quiz_type
+                })
+            ])
+        ])
+    else:  # type_answer
+        quiz_content = html.Div([
+            direction_toggle,
+            html.H3("Quiz Mode - Type Answer"),
+            html.Div([
+                html.H4(f"Translate: {question_word}"),
+                dcc.Input(id='quiz-input', type='text', placeholder='Type your answer'),
+                html.Div(id='quiz-feedback'),
+                html.Button("Check Answer", id="check-answer-btn"),
+                html.Button("Next Question", id="next-question-btn", style={'display': 'none'}),
+                # Store correct answer and other data
+                dcc.Store(id='quiz-data', data={
+                    'correct_answer': correct_answer,
+                    'question_word': question_word,
+                    'direction': direction,
+                    'quiz_type': quiz_type
+                })
+            ])
+        ])
+    
+    return quiz_content
+
+# Callbacks for the quiz functionality will be in app.py or here depending on your structure
