@@ -33,23 +33,26 @@ app.layout = html.Div([
     dbc.Container([
         html.H1("French-German Vocabulary Learning", className="text-center my-4"),
         
-        # Language direction toggle
+        # Content section - now placed before buttons
+        html.Div(id="content-section", className="text-center mb-4"),
+        
+        # Button container - all buttons moved here
         html.Div([
-            dbc.Button("FR → DE", id="toggle-direction-btn", color="primary", className="mb-4"),
-        ], className="text-center"),
-        
-        # Main menu buttons
-        html.Div([
-            dbc.Button("LEARNING", id="learning-btn", color="primary", className="me-2"),
-            dbc.Button("LEARNING & QUIZ", id="learning-quiz-btn", color="primary", className="me-2"),
-            dbc.Button("QUIZ", id="quiz-btn", color="primary"),
-        ], className="text-center mb-4"),
-        
-        # Sub-menu buttons (initially hidden)
-        html.Div(id="submenu-buttons", className="text-center mb-4", style={"display": "none"}),
-        
-        # Content section
-        html.Div(id="content-section", className="text-center"),
+            # Language direction toggle
+            html.Div([
+                dbc.Button("FR → DE", id="toggle-direction-btn", color="primary", className="mb-4"),
+            ], className="text-center"),
+            
+            # Main menu buttons
+            html.Div([
+                dbc.Button("LEARNING", id="learning-btn", color="primary", className="me-2"),
+                dbc.Button("LEARNING & QUIZ", id="learning-quiz-btn", color="primary", className="me-2"),
+                dbc.Button("QUIZ", id="quiz-btn", color="primary"),
+            ], className="text-center mb-4"),
+            
+            # Sub-menu buttons (initially hidden)
+            html.Div(id="submenu-buttons", className="text-center mb-4", style={"display": "none"}),
+        ], className="button-container mt-4"),
         
         # Store components for app state
         dcc.Store(id="direction-store", data="fr-de"),  # 'fr-de' or 'de-fr'
@@ -81,6 +84,10 @@ def toggle_direction(n_clicks, direction, mode, file_name, vocab_data):
         new_direction = "fr-de"
         button_text = "FR → DE"
     
+    # Clear screen first
+    if not mode or not vocab_data:
+        return button_text, new_direction, html.Div()
+    
     # Update content based on the new direction
     if mode == "learning":
         content = display_learning_content(vocab_data, new_direction)
@@ -93,18 +100,19 @@ def toggle_direction(n_clicks, direction, mode, file_name, vocab_data):
 
 # Callback for main menu buttons
 @app.callback(
-    Output("submenu-buttons", "children"),
-    Output("submenu-buttons", "style"),
-    Output("mode-store", "data"),
-    Input("learning-btn", "n_clicks"),
-    Input("learning-quiz-btn", "n_clicks"),
-    Input("quiz-btn", "n_clicks"),
+    [Output("submenu-buttons", "children"),
+     Output("submenu-buttons", "style"),
+     Output("mode-store", "data"),
+     Output("content-section", "children", allow_duplicate=True)],
+    [Input("learning-btn", "n_clicks"),
+     Input("learning-quiz-btn", "n_clicks"),
+     Input("quiz-btn", "n_clicks")],
     prevent_initial_call=True
 )
 def show_submenu(learning_clicks, learning_quiz_clicks, quiz_clicks):
     ctx = dash.callback_context
     if not ctx.triggered:
-        return dash.no_update, {"display": "none"}, None
+        return dash.no_update, {"display": "none"}, None, dash.no_update
     
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
     
@@ -123,16 +131,17 @@ def show_submenu(learning_clicks, learning_quiz_clicks, quiz_clicks):
             dbc.Button(file, id={"type": "sub-btn", "index": file}, color="primary", className="me-2 mb-2")
         )
     
-    return sub_buttons, {"display": "block"}, mode
+    # Clear the content section
+    return sub_buttons, {"display": "block"}, mode, html.Div()
 
 # Callback for sub-menu buttons
 @app.callback(
-    Output("content-section", "children"),
-    Output("file-store", "data"),
-    Output("vocab-store", "data"),
-    Input({"type": "sub-btn", "index": dash.dependencies.ALL}, "n_clicks"),
-    State("mode-store", "data"),
-    State("direction-store", "data"),
+    [Output("content-section", "children", allow_duplicate=True),
+     Output("file-store", "data"),
+     Output("vocab-store", "data")],
+    [Input({"type": "sub-btn", "index": dash.dependencies.ALL}, "n_clicks")],
+    [State("mode-store", "data"),
+     State("direction-store", "data")],
     prevent_initial_call=True
 )
 def display_content(sub_clicks, mode, direction):
