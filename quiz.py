@@ -21,7 +21,7 @@ def generate_options(correct_answer, all_answers, num_options=3):
     
     return options
 
-def display_quiz_content(vocab_data, quiz_type="multiple_choice", direction="fr-de"):
+def display_quiz_content(vocab_data, quiz_type="multiple_choice", direction="fr-de", feedback_message=None, feedback_color=None):
     """
     Display quiz content based on quiz type and direction.
     
@@ -29,6 +29,8 @@ def display_quiz_content(vocab_data, quiz_type="multiple_choice", direction="fr-
         vocab_data: Dictionary of vocabulary data
         quiz_type: Either "multiple_choice" or "type_answer"
         direction: Either "fr-de" or "de-fr"
+        feedback_message: Optional feedback message to display
+        feedback_color: Optional color for the feedback message
     """
     # Determine source and target languages
     source_lang = "french" if direction == "fr-de" else "german"
@@ -45,71 +47,87 @@ def display_quiz_content(vocab_data, quiz_type="multiple_choice", direction="fr-
         correct_answer = random_word_key
         question_word = vocab_data[random_word_key]["german"]
     
-    # Create direction toggle buttons
-    direction_toggle = dbc.ButtonGroup([
-        dbc.Button("FR-DE", id="fr-de-quiz-btn", color="primary", className="me-1", 
-                  active=direction=="fr-de"),
-        dbc.Button("DE-FR", id="de-fr-quiz-btn", color="primary", 
-                  active=direction=="de-fr")
-    ])
+    # Create feedback component if needed
+    feedback_component = html.Div() # Empty div by default
+    if feedback_message:
+        if feedback_color == "red":
+            feedback_component = html.Div([
+                html.Span("Incorrect! ", style={"color": "red", "font-weight": "bold"}),
+                html.Span(f"The correct answer is: {correct_answer}")
+            ], style={"margin": "10px 0"})
+        elif feedback_color == "green":
+            feedback_component = html.Div(
+                "Correct!", 
+                style={"color": "green", "margin": "10px 0", "font-weight": "bold"}
+            )
+        else:
+            feedback_component = html.Div(
+                feedback_message, 
+                style={"color": feedback_color or "blue", "margin": "10px 0"}
+            )
+    
+    # Buttons for checking and next question
+    button_styles = {
+        'check': {'display': 'inline-block', 'margin-right': '10px'},
+        'next': {'display': 'none'} if not feedback_message else {'display': 'inline-block'}
+    }
     
     if quiz_type == "multiple_choice":
-        # Generate 3 options, including the correct one
-        options = [correct_answer]
-        while len(options) < 3:
-            random_option_key = random.choice(word_keys)
+        # Generate options with correct answer included
+        all_answers = []
+        for key in vocab_data:
             if source_lang == "french":
-                option = vocab_data[random_option_key]["german"]
+                all_answers.append(vocab_data[key]["german"])
             else:
-                option = random_option_key
-            
-            if option not in options:
-                options.append(option)
+                all_answers.append(key)
         
-        # Shuffle options
-        random.shuffle(options)
+        options = generate_options(correct_answer, all_answers)
         
         # Create radio items for multiple choice
         quiz_content = html.Div([
-            direction_toggle,
             html.H3("Quiz Mode - Multiple Choice"),
+            html.H4(f"Translate: {question_word}"),
+            dcc.RadioItems(
+                id='quiz-options',
+                options=[{'label': opt, 'value': opt} for opt in options],
+                labelStyle={'display': 'block', 'margin': '10px'},
+                value=None  # Ensure it's uncontrolled on initial render
+            ),
+            feedback_component,
             html.Div([
-                html.H4(f"Translate: {question_word}"),
-                dcc.RadioItems(
-                    id='quiz-options',
-                    options=[{'label': opt, 'value': opt} for opt in options],
-                    labelStyle={'display': 'block', 'margin': '10px'}
-                ),
-                html.Div(id='quiz-feedback'),
-                html.Button("Check Answer", id="check-answer-btn"),
-                html.Button("Next Question", id="next-question-btn", style={'display': 'none'}),
-                # Store correct answer and other data
-                dcc.Store(id='quiz-data', data={
-                    'correct_answer': correct_answer,
-                    'question_word': question_word,
-                    'direction': direction,
-                    'quiz_type': quiz_type
-                })
-            ])
+                html.Button("Check", id="check-btn", style=button_styles['check']),
+                html.Button("Next", id="next-btn", style=button_styles['next'])
+            ], style={'margin-top': '15px'}),
+            # Store correct answer and other data
+            dcc.Store(id='quiz-data', data={
+                'correct_answer': correct_answer,
+                'question_word': question_word,
+                'direction': direction,
+                'quiz_type': quiz_type
+            })
         ])
     else:  # type_answer
         quiz_content = html.Div([
-            direction_toggle,
             html.H3("Quiz Mode - Type Answer"),
+            html.H4(f"Translate: {question_word}"),
+            dcc.Input(
+                id='answer-input',  # Match the ID expected in app.py
+                type='text',
+                placeholder='Type your answer',
+                value='',  # Initialize with empty string to make it controlled
+            ),
+            feedback_component,
             html.Div([
-                html.H4(f"Translate: {question_word}"),
-                dcc.Input(id='quiz-input', type='text', placeholder='Type your answer'),
-                html.Div(id='quiz-feedback'),
-                html.Button("Check Answer", id="check-answer-btn"),
-                html.Button("Next Question", id="next-question-btn", style={'display': 'none'}),
-                # Store correct answer and other data
-                dcc.Store(id='quiz-data', data={
-                    'correct_answer': correct_answer,
-                    'question_word': question_word,
-                    'direction': direction,
-                    'quiz_type': quiz_type
-                })
-            ])
+                html.Button("Check", id="check-btn", style=button_styles['check']),
+                html.Button("Next", id="next-btn", style=button_styles['next'])
+            ], style={'margin-top': '15px'}),
+            # Store correct answer and other data
+            dcc.Store(id='quiz-data', data={
+                'correct_answer': correct_answer,
+                'question_word': question_word,
+                'direction': direction,
+                'quiz_type': quiz_type
+            })
         ])
     
     return quiz_content
