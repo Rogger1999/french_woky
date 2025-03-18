@@ -159,4 +159,4 @@ def toggle_vocab_direction(fr_de_clicks, de_fr_clicks, selected_file):
 
 # Run the app
 if __name__ == "__main__":
-    app.run_server(debug=True, port=8080)
+    app.run(debug=True, port=8080)
