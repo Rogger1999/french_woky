@@ -1,32 +1,50 @@
 {
-  "un ordinateur": {
-    "german": "ein Computer"
+  "Hein ?": {
+    "german": "Wie? (ugs.)"
   },
-  "un portable": {
-    "german": "ein Laptop"
+  "Quand est-ce que ... ?": {
+    "german": "Wann ...?"
   },
-  "une tablette": {
-    "german": "ein Tablet"
+  "Pourquoi est-ce que ... ?": {
+    "german": "Warum ...?"
   },
-  "un smartphone": {
-    "german": "ein Smartphone"
+  "Préfèrer faire qc": {
+    "german": "vorziehen, etw. zu tun"
   },
-  "un clavier": {
-    "german": "eine Tastatur"
+  "Préférer qc": {
+    "german": "etw. lieber mögen"
   },
-  "une souris": {
-    "german": "eine Maus"
+  "Comment est-ce que ... ?": {
+    "german": "Wie ...?"
   },
-  "un écran": {
-    "german": "ein Bildschirm"
+  "Vers ...": {
+    "german": "auf jdn./etw. zu; zu jdm./etw. hin"
   },
-  "un casque": {
-    "german": "ein Kopfhörer"
+  "Sur Facebook": {
+    "german": "auf Facebook"
   },
-  "une imprimante": {
-    "german": "ein Drucker"
+  "Un fichier": {
+    "german": "eine Datei"
   },
-  "un scanner": {
-    "german": "ein Scanner"
+  "Un mot de passe": {
+    "german": "ein Passwort"
+  },
+  "Télécharger qc": {
+    "german": "etw. herunterladen"
+  },
+  "Ouvrir qc": {
+    "german": "etw. öffnen"
+  },
+  "Fermer qc": {
+    "german": "etw. schließen"
+  },
+  "Clic !": {
+    "german": "Klick!"
+  },
+  "Un réseau social": {
+    "german": "ein soziales Netzwerk"
+  },
+  "Un réseau/des réseaux": {
+    "german": "ein Netz/Netze"
   }
 }

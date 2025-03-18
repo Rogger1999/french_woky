@@ -1,32 +1,38 @@
 {
-  "un disque dur": {
-    "german": "eine Festplatte"
+  "C'est bon.": {
+    "german": "Es ist gut."
   },
-  "une clé USB": {
-    "german": "ein USB-Stick"
+  "Des informations": {
+    "german": "die Neuigkeiten"
   },
-  "un logiciel": {
-    "german": "eine Software"
+  "Une photo": {
+    "german": "ein Foto"
   },
-  "un fichier": {
-    "german": "eine Datei"
+  "Sortir de qc": {
+    "german": "aus etw. hinausgehen"
   },
-  "un dossier": {
-    "german": "ein Ordner"
+  "Téléphoner à qn": {
+    "german": "jdn. anrufen"
   },
-  "un réseau": {
-    "german": "ein Netzwerk"
+  "Envoyer qc à qn": {
+    "german": "jdm. etw. schicken"
   },
-  "un site web": {
-    "german": "eine Webseite"
+  "Internet": {
+    "german": "das Internet"
   },
-  "un navigateur": {
-    "german": "ein Browser"
+  "Regarder qc sur Internet": {
+    "german": "etw. im Internet ansehen"
   },
-  "un moteur de recherche": {
-    "german": "eine Suchmaschine"
+  "Un problème": {
+    "german": "ein Problem"
   },
-  "un lien": {
-    "german": "ein Link"
+  "Parler à qn": {
+    "german": "mit jdm. sprechen"
+  },
+  "Un entraînement": {
+    "german": "ein Training"
+  },
+  "Les soldes": {
+    "german": "der Schlussverkauf"
   }
 }
